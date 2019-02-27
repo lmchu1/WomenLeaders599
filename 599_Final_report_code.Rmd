@@ -1,0 +1,81 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r setup, include=FALSE}
+
+library(tidyverse)
+library(pander)
+library(ggplot2)
+```
+
+```{r}
+plot(womendata$perc_women,womendata$age)
+
+```
+ 
+
+```{r, eval=TRUE}
+link='https://github.com/lmchu1/WomenLeaders599/raw/master/preprocessed_data.csv'
+
+womendata=read.csv(link,stringsAsFactors = F)
+
+names(womendata)
+
+```
+
+
+
+```{r, eval=TRUE}
+(summary(womendata)) 
+
+```
+
+
+```{r, eval=TRUE}
+hist(womendata$perc_women,
+     xlab= 'Percentage of Female elected representatives' , ylab='Number of Survey Respondents',
+     main='Female Representatives among survey respondents',
+       col='coral1'
+     )
+
+```
+
+```{r}
+ggplot(womendata, aes(opinion_leaders))+
+       geom_bar(fill='steelblue') + theme_classic() +
+  xlab('Opinion about Political Leaders') + ylab('Frequency') + ggtitle('Distribution of Opinions about Leaders')
+
+```
+
+* Collinearity test
+```{r}
+Linreg=lm(opinion_leaders ~ perc_women + age + hhincome + gender + educ + race + employment + party, data=womendata) 
+
+
+```
+
+** Explain why this model is not appropriate for our data
+```{r}
+
+summary(Linreg)
+
+
+```
+
+* Multi-collinearity * Ask
+```{r}
+vif(Linreg) > 3 
+
+```
+
+Hetero
+```{r}
+
+ncvTest(Linreg)$p<0.05
+```
+
+
+```
+
