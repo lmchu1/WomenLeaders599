@@ -4,7 +4,9 @@ output: html_notebook
 ---
 
 ```{r setup, include=FALSE}
-
+install.packages('tidyverse')
+install.packages('pander')
+install.packages('ggplot2')
 library(tidyverse)
 library(pander)
 library(ggplot2)
@@ -66,6 +68,8 @@ summary(Linreg)
 
 * Multi-collinearity * Ask
 ```{r}
+install.packages('car')
+library('car')
 vif(Linreg) > 3 
 
 ```
@@ -76,6 +80,11 @@ Hetero
 ncvTest(Linreg)$p<0.05
 ```
 
+```{r}
+womendata.lm=lm(opinion_leaders~perc_women, data=womendata)
+womendata.res = resid(womendata.lm)
+plot(womendata$perc_women,  womendata.res) + ylab("Residuals") + xlab("opinion_leaders") + main("Residual Plot")
+abline(0,0)
 
 ```
 
