@@ -1,10 +1,15 @@
 ---
 title: "R Notebook"
-output: html_notebook
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
-
+install.packages('tidyverse')
+install.packages('pander')
+install.packages('ggplot2')
 library(tidyverse)
 library(pander)
 library(ggplot2)
@@ -66,16 +71,51 @@ summary(Linreg)
 
 * Multi-collinearity * Ask
 ```{r}
+install.packages('car')
+library('car')
 vif(Linreg) > 3 
 
 ```
 
-Hetero
+
 ```{r}
 
-ncvTest(Linreg)$p<0.05
+```
+
+```{r}
+#womendata.lm=lm(opinion_leaders~perc_women, data=womendata)
+#womendata.res = resid(womendata.lm)
+# normality of residuals?
+#install.packages("car")
+library(car)
+qqPlot(womendata.lm, main="QQ Plot")
+
+```
+
+```{r}
+library("oglmx")
+results.oprob<-oglmx(opinion_leaders ~ perc_women + educ + age + gender + hhincome + employment + party, data=womendata, link="probit",
+     constantMEAN = FALSE, constantSD = FALSE,                         
+     delta=0,threshparam = NULL)
+
+summary(results.oprob)
+                     
+```
+
+```{r}
+margins.oglmx(results.oprob,ascontinuous = TRUE)
 ```
 
 
+Hetero
+```{r}
+results.oprobhet<-oglmx(opinion_leaders ~ perc_women + educ + age + gender + hhincome + employment + party, data=womendata,constantMEAN= FALSE, constantSD= FALSE,threshparam=NULL)   
+
+summary(results.oprobhet)
+```
+```{r}
+results.oprobhet<-oglmx(opinion_leaders ~ perc_women + educ + age + gender + hhincome + employment + party, data=womendata,constantMEAN= FALSE, constantSD= FALSE,threshparam=NULL)   
+
+summary(results.oprobhet$Hetero)
 ```
 
