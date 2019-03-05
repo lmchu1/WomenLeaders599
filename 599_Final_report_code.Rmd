@@ -109,12 +109,13 @@ margins.oglmx(results.oprob,ascontinuous = TRUE)
 
 Hetero
 ```{r}
-results.oprobhet<-oglmx(opinion_leaders ~ perc_women + educ + age + gender + hhincome + employment + party,~ perc_women + educ + age + gender + hhincome + employment + party, data=womendata,+   
-                constantMEAN <- FALSE, constantSD= FALSE)   
+results.oprobhet<-oglmx(opinion_leaders ~ perc_women + educ + age + gender + hhincome + employment + party, data=womendata,constantMEAN= FALSE, constantSD= FALSE,threshparam=NULL)   
 
 summary(results.oprobhet)
 ```
 ```{r}
+results.oprobhet<-oglmx(opinion_leaders ~ perc_women + educ + age + gender + hhincome + employment + party, data=womendata,constantMEAN= FALSE, constantSD= FALSE,threshparam=NULL)   
 
+summary(results.oprobhet$Hetero)
 ```
 
