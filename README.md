@@ -10,12 +10,12 @@
 
 
 <center>
-#<img src="https://github.com/EvansDataScience/basicFinal_CompThink/raw/master/groupPic.png" width="800">
+#<img src="https://github.com/lmchu1/WomenLeaders599/blob/master/Map.png" width="700">
 </center>
 
 In this repo you can find:
 
-* The final [report](http://htmlpreview.github.io/?https://github.com/EvansDataScience/basicFinal_CompThink/blob/master/Analytics.html)
+* The final [report](https://github.com/lmchu1/WomenLeaders599/blob/master/599_Final_report_code.nb.html)
 
 FIX THIS ONE: * The folder [data](https://github.com/EvansDataScience/basicFinal_CompThink/tree/master/data) with all the original files.
 
