@@ -62,7 +62,8 @@ Here we examine the distribution of "percent of female elected representatives" 
 
 Looking at a map of the United States, we can see that certain states have much higher percentages of female than others:
 
-![*Map of % of Female Representatives by State*](https://github.com/lmchu1/WomenLeaders599/blob/master/images/Map.png)
+![*Map of % of Female Representatives by State*](https://github.com/lmchu1/WomenLeaders599/blob/master/images/states_map.JPG?raw=true)
+
 
 
 
@@ -73,7 +74,17 @@ ggplot(womendata, aes(opinion_leaders))+
 
 ```
 
-* Collinearity test
+*Key:* 
+1. *Men generally make better political leaders than women *
+2. *In general, women and men make equally good political leaders*
+3. *Women generally make better political leaders than men*
+
+The majority of respondents believe that women and men make equally good political leaders. However, a greater number believe that men make better political leaders than believe that women make better political leaders.
+
+
+
+
+#Collinearity test
 ```{r collinear}
 Linreg=lm(opinion_leaders ~ perc_women + age + hhincome + gender + educ + race + employment + party, data=womendata) 
 
@@ -117,7 +128,7 @@ summary(results.oprob)
 ```
 
 ```{r, warning=FALSE}
-pander(margins.oglmx(results.oprob,ascontinuous = TRUE))
+margins.oglmx(results.oprob,ascontinuous = TRUE)
 ```
 
 
@@ -125,12 +136,12 @@ Hetero
 ```{r heterosketadasticty, warning=FALSE}
 results.oprobhet<-oglmx(opinion_leaders ~ perc_women + educ + age + gender + hhincome + employment + party, data=womendata,constantMEAN= FALSE, constantSD= FALSE,threshparam=NULL)   
 
-pander(summary(results.oprobhet))
+summary(results.oprobhet)
 ```
 
 ```{r}
 results.oprobhet<-oglmx(opinion_leaders ~ perc_women + educ + age + gender + hhincome + employment + party, data=womendata,constantMEAN= FALSE, constantSD= FALSE,threshparam=NULL)   
 
-pander(summary(results.oprobhet$Hetero))
+summary(results.oprobhet$Hetero)
 ```
 
