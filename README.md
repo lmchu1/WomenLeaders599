@@ -16,7 +16,7 @@
 
 In this repo you can find:
 
-* The final [report](https://github.com/lmchu1/WomenLeaders599/blob/master/599_Final_report_code.nb.html)
+* The final [report](https://github.com/lmchu1/WomenLeaders599/blob/master/599_Final_report_code.html)
 
 * The folder [data](https://github.com/lmchu1/WomenLeaders599/tree/master/data) with all the raw data files.
 
