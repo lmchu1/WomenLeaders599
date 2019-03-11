@@ -1,44 +1,55 @@
 ---
-title: "R Notebook"
+title: "Female Representatives and Perception of Women as Leaders"
+author: "Lisa Chu, Nida Haroon, Sophia Ahn, Victoria Ewing"
+date: "March 12, 2018"
 output:
-  pdf_document: default
   html_document:
-    df_print: paged
+    theme: yeti
 ---
 
 ```{r setup, include=FALSE}
-install.packages('tidyverse')
-install.packages('pander')
-install.packages('ggplot2')
+#Please install the following packages if have not done so previously:
+#install.packages('tidyverse')
+#install.packages('pander')
+#install.packages('ggplot2')
+#install.packages('car')
+#install.packages('oglmx')
+
 library(tidyverse)
 library(pander)
 library(ggplot2)
+library(car)
+library(oglmx)
 ```
 
 ```{r}
-plot(womendata$perc_women,womendata$age)
-
+#plot(womendata$perc_women,womendata$age)
+#do we want to include this in our report?
 ```
  
+#Introduction 
+In the United States, despite years of effort to increase the level of gender equality, women are underrepresented in leadership positions in the governemnt and in business. In 2014, PEW Research Center conducted a nationally representative phone survey asking respondents how they felt about men and women in leadership positions. We hypothesize that being exposed to women in leadership positions will increase individuals perception of women as leaders. In this analysis, we are examining the role that having female representatives in states' legislatures  has on respondent's answer to the question: *What is your opinion on men and women as political leaders?* Respondents could report that they felt men were better, that women were better, or that the two made equally good leaders.
+ 
+ 
 
-```{r, eval=TRUE}
+```{r data import, eval=TRUE}
 link='https://github.com/lmchu1/WomenLeaders599/raw/master/preprocessed_data.csv'
 
-womendata=read.csv(link,stringsAsFactors = F)
+womendata<-read.csv(link,stringsAsFactors = F)
 
-names(womendata)
+pander(names(womendata))
+
+```
+
+We hypothesize that respondents' gender, age, level of education, income level, and political party all likely impact their perception of women as political leaders.
+
+```{r summary of data, eval=TRUE}
+pander(summary(womendata)) 
 
 ```
 
 
-
-```{r, eval=TRUE}
-(summary(womendata)) 
-
-```
-
-
-```{r, eval=TRUE}
+```{r histogram1, eval=TRUE}
 hist(womendata$perc_women,
      xlab= 'Percentage of Female elected representatives' , ylab='Number of Survey Respondents',
      main='Female Representatives among survey respondents',
@@ -47,7 +58,15 @@ hist(womendata$perc_women,
 
 ```
 
-```{r}
+Here we examine the distribution of "percent of female elected representatives" among the survey respondents. Because we are examining state legistures, all indivduals from the same state have the smale percent of female representatives. All individuals The percentage of female representatives in 2014 ranged from 12.5% to 41%.
+
+Looking at a map of the United States, we can see that certain states have much higher percentages of female than others:
+
+![*Map of % of Female Representatives by State*](https://github.com/lmchu1/WomenLeaders599/blob/master/images/Map.png)
+
+
+
+```{r barchart, warning=FALSE}
 ggplot(womendata, aes(opinion_leaders))+
        geom_bar(fill='steelblue') + theme_classic() +
   xlab('Opinion about Political Leaders') + ylab('Frequency') + ggtitle('Distribution of Opinions about Leaders')
@@ -55,67 +74,63 @@ ggplot(womendata, aes(opinion_leaders))+
 ```
 
 * Collinearity test
-```{r}
+```{r collinear}
 Linreg=lm(opinion_leaders ~ perc_women + age + hhincome + gender + educ + race + employment + party, data=womendata) 
 
 
 ```
 
 ** Explain why this model is not appropriate for our data
-```{r}
+```{r linregression}
 
-summary(Linreg)
+pander(summary(Linreg))
 
 
 ```
 
 * Multi-collinearity * Ask
-```{r}
-install.packages('car')
-library('car')
-vif(Linreg) > 3 
+```{r multicolinearity}
+
+pander(vif(Linreg) > 3 )
 
 ```
 
 
-```{r}
-
-```
 
 ```{r}
-#womendata.lm=lm(opinion_leaders~perc_women, data=womendata)
+womendata.lm=lm(opinion_leaders~perc_women, data=womendata)
 #womendata.res = resid(womendata.lm)
 # normality of residuals?
-#install.packages("car")
-library(car)
+
+
 qqPlot(womendata.lm, main="QQ Plot")
 
 ```
 
 ```{r}
-library("oglmx")
+
 results.oprob<-oglmx(opinion_leaders ~ perc_women + educ + age + gender + hhincome + employment + party, data=womendata, link="probit",
      constantMEAN = FALSE, constantSD = FALSE,                         
      delta=0,threshparam = NULL)
 
 summary(results.oprob)
-                     
 ```
 
-```{r}
-margins.oglmx(results.oprob,ascontinuous = TRUE)
+```{r, warning=FALSE}
+pander(margins.oglmx(results.oprob,ascontinuous = TRUE))
 ```
 
 
 Hetero
-```{r}
+```{r heterosketadasticty, warning=FALSE}
 results.oprobhet<-oglmx(opinion_leaders ~ perc_women + educ + age + gender + hhincome + employment + party, data=womendata,constantMEAN= FALSE, constantSD= FALSE,threshparam=NULL)   
 
-summary(results.oprobhet)
+pander(summary(results.oprobhet))
 ```
+
 ```{r}
 results.oprobhet<-oglmx(opinion_leaders ~ perc_women + educ + age + gender + hhincome + employment + party, data=womendata,constantMEAN= FALSE, constantSD= FALSE,threshparam=NULL)   
 
-summary(results.oprobhet$Hetero)
+pander(summary(results.oprobhet$Hetero))
 ```
 
