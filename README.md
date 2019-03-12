@@ -13,6 +13,8 @@
 <img src="https://github.com/lmchu1/WomenLeaders599/blob/master/images/group_photo.JPG">
 </center>
 
+## Project Summary:
+This study explores whether elected female representatives across States influence people’s perceptions of women as leaders. Our data is 2014 Gender and Leadership dataset from PEW Research Centre. Data for elected representatives is from the National Conference of State Legislatures.
 
 In this repo you can find:
 
