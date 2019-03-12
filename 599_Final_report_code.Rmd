@@ -132,10 +132,13 @@ results.oprob<-oglmx(opinion_leaders ~ perc_women + educ + age + gender + hhinco
 summary(results.oprob)
 ```
 
+As we are using the ordered probit model, we need to see the marginal effects to see the effect of our independent variables on our dependent variable. 
+
 ```{r, warning=FALSE}
 margins.oglmx(results.oprob,ascontinuous = TRUE)
 ```
 
+Our results show that education, gender, and party have significant effects at the 95% confidence level on a person's opinions on political leaders. Regarding our primary variable of interest, an 1-unit increase in the percentage of elected women representatives in the respondent's state of residence insignificantly decreases the likelihood of believing that men generally make better political leaders than woman by roughly 12%.
 
 #Heteroskedasticity
 ```{r heterosketadasticty, warning=FALSE}
