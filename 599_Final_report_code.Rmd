@@ -22,15 +22,25 @@ library(car)
 library(oglmx)
 ```
 
-```{r}
-#plot(womendata$perc_women,womendata$age)
-#do we want to include this in our report?
-```
  
 #Introduction 
-In the United States, despite years of effort to increase the level of gender equality, women are underrepresented in leadership positions in the governemnt and in business. In 2014, PEW Research Center conducted a nationally representative phone survey asking respondents how they felt about men and women in leadership positions. We hypothesize that being exposed to women in leadership positions will increase individuals perception of women as leaders. In this analysis, we are examining the role that having female representatives in states' legislatures  has on respondent's answer to the question: *What is your opinion on men and women as political leaders?* Respondents could report that they felt men were better, that women were better, or that the two made equally good leaders.
+In the United States, despite years of effort to increase the level of gender equality, women are underrepresented in leadership positions in the governemnt and in business. In 2014, PEW Research Center conducted a nationally representative phone survey asking respondents how they felt about men and women in leadership positions. We hypothesize that being exposed to women in leadership positions will increase individuals' perception of women as leaders. 
  
- 
+Our research question is as follows: **Does the percentage of female representatives in their state influence people's perceptions of women as leaders?**
+
+
+#Data
+The data for the outcome variable is from the Gender and Leadership dataset from PEW Research Centre. The final sample includes 1,835 adults, 18+ residing in the US and was conducted between November 12-21, 2014. The questionnaire was administered in both English and Spanish.
+
+The data for the representatives is from the National Conference of State Legislatures. The two datasets were cleaned and merged to keep only the variables of interest. 
+
+The outcome variable is Question 5a on the PEW Survey which asks the respondents, 'Which one of the following statements comes closest to your opinion about as POLITICAL LEADERS?' 
+1. Men generally make better political leaders than women 
+2. In general, women and men make equally good political leaders 
+3. Women generally make better political leaders than men
+
+#Summary Statistics
+
 
 ```{r data import, eval=TRUE}
 link='https://github.com/lmchu1/WomenLeaders599/raw/master/preprocessed_data.csv'
@@ -84,14 +94,24 @@ The majority of respondents believe that women and men make equally good politic
 
 
 
-#Collinearity test
+#Why a Linear Regression Isn't Appropriate
 ```{r collinear}
 Linreg=lm(opinion_leaders ~ perc_women + age + hhincome + gender + educ + race + employment + party, data=womendata) 
 
 
 ```
 
-** Explain why this model is not appropriate for our data
+A linear regression is not appropriate for this data because the outcome variable of interest is an ordered categorical variable.
+
+```{r}
+womendata.lm=lm(opinion_leaders~perc_women, data=womendata)
+
+qqPlot(womendata.lm, main="QQ Plot")
+
+```
+
+This graph of the residuals is a good visual representation of why the linear model is inappropriate
+
 ```{r linregression}
 
 pander(summary(Linreg))
@@ -99,24 +119,9 @@ pander(summary(Linreg))
 
 ```
 
-* Multi-collinearity * Ask
-```{r multicolinearity}
 
-pander(vif(Linreg) > 3 )
+#Results
 
-```
-
-
-
-```{r}
-womendata.lm=lm(opinion_leaders~perc_women, data=womendata)
-#womendata.res = resid(womendata.lm)
-# normality of residuals?
-
-
-qqPlot(womendata.lm, main="QQ Plot")
-
-```
 
 ```{r}
 
@@ -132,7 +137,7 @@ margins.oglmx(results.oprob,ascontinuous = TRUE)
 ```
 
 
-Hetero
+#Heteroskedasticity
 ```{r heterosketadasticty, warning=FALSE}
 results.oprobhet<-oglmx(opinion_leaders ~ perc_women + educ + age + gender + hhincome + employment + party, data=womendata,constantMEAN= FALSE, constantSD= FALSE,threshparam=NULL)   
 
@@ -143,5 +148,13 @@ summary(results.oprobhet)
 results.oprobhet<-oglmx(opinion_leaders ~ perc_women + educ + age + gender + hhincome + employment + party, data=womendata,constantMEAN= FALSE, constantSD= FALSE,threshparam=NULL)   
 
 summary(results.oprobhet$Hetero)
+```
+
+
+#Multi-collinearity
+```{r multicolinearity}
+
+pander(vif(Linreg) > 3 )
+
 ```
 
