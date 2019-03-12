@@ -110,7 +110,7 @@ qqPlot(womendata.lm, main="QQ Plot")
 
 ```
 
-This graph of the residuals is a good visual representation of why the linear model is inappropriate
+The above graph of the residuals is a good visual representation of why the linear model is inappropriate
 
 ```{r linregression}
 
@@ -153,6 +153,7 @@ results.oprobhet<-oglmx(opinion_leaders ~ perc_women + educ + age + gender + hhi
 summary(results.oprobhet$Hetero)
 ```
 
+We tested our model for heteroskedasticity to see if the error term has constant variance. Because our test resulted in "FALSE," we know that there is equal variance in the distribution of residuals.
 
 #Multi-collinearity
 ```{r multicolinearity}
@@ -160,4 +161,4 @@ summary(results.oprobhet$Hetero)
 pander(vif(Linreg) > 3 )
 
 ```
-
+We tested for multicollinearity to see if our independent variables are perfect linear functions of each other. If there is multicollinearity, then our model will not work because we cannot simultaneously get estimates for independent variable that are perfect linear functions. Fortunately, our test resulted in "false."
