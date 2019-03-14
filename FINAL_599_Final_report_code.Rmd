@@ -1,7 +1,7 @@
 ---
-title: "Female Representatives and Perception of Women as Leaders"
+title: "Elected Female Representatives and their effect on Perception Women Leaders"
 author: "Lisa Chu, Nida Haroon, Sophia Ahn, Victoria Ewing"
-date: "March 12, 2018"
+date: "March 19, 2019"
 output:
   html_document:
     theme: yeti
@@ -26,10 +26,10 @@ library(oglmx)
 #Introduction 
 In the United States, despite years of effort to increase the level of gender equality, women are underrepresented in leadership positions in the governemnt and in business. In 2014, PEW Research Center conducted a nationally representative phone survey asking respondents how they felt about men and women in leadership positions. We hypothesize that being exposed to women in leadership positions will increase individuals' perception of women as leaders. 
  
-Our research question is as follows: **Does the percentage of female representatives in their state influence people's perceptions of women as leaders?**
+Our research question is as follows: "**Does the percentage of female representatives in their state influence people's perceptions of women as leaders?".**
 
 
-#Data
+##Data
 The data for the outcome variable is from the Gender and Leadership dataset from PEW Research Centre. The final sample includes 1,835 adults, 18+ residing in the US and was conducted between November 12-21, 2014. The questionnaire was administered in both English and Spanish.
 
 The data for the representatives is from the National Conference of State Legislatures. The two datasets were cleaned and merged to keep only the variables of interest. 
@@ -39,8 +39,9 @@ The outcome variable is Question 5a on the PEW Survey which asks the respondents
 2. In general, women and men make equally good political leaders 
 3. Women generally make better political leaders than men
 
-#Summary Statistics
+The outcome variable is an ordered categorical variable. We hypothesize that respondents' gender, age, level of education, race, household income level, employment, political party and percentage of elect women representatives in respective States, all likely impact their perception of women as political leaders.
 
+##Summary Statistics
 
 ```{r data import, eval=TRUE}
 link='https://github.com/lmchu1/WomenLeaders599/raw/master/preprocessed_data.csv'
@@ -51,7 +52,6 @@ pander(names(womendata))
 
 ```
 
-We hypothesize that respondents' gender, age, level of education, income level, and political party all likely impact their perception of women as political leaders.
 
 ```{r summary of data, eval=TRUE}
 pander(summary(womendata)) 
@@ -59,6 +59,7 @@ pander(summary(womendata))
 ```
 
 
+In the histogram below, we examine the distribution of "percent of female elected representatives" among the survey respondents. Because we are examining state legistures, all individuals from the same state have the same percent of female representatives. The percentage of female representatives in 2014 ranged from 12.5% to 41%.
 ```{r histogram1, eval=TRUE}
 hist(womendata$perc_women,
      xlab= 'Percentage of Female elected representatives' , ylab='Number of Survey Respondents',
@@ -68,13 +69,14 @@ hist(womendata$perc_women,
 
 ```
 
-Here we examine the distribution of "percent of female elected representatives" among the survey respondents. Because we are examining state legistures, all indivduals from the same state have the smale percent of female representatives. All individuals The percentage of female representatives in 2014 ranged from 12.5% to 41%.
 
-Looking at a map of the United States, we can see that certain states have much higher percentages of female than others:
+
+The map of the United States shows that certain states have a much higher percentages of female representatives than others. For e.g. Colorado has 41% female representatives compared to Louisiana and South Carolina is 13%.
 
 ![*Map of % of Female Representatives by State*](https://github.com/lmchu1/WomenLeaders599/blob/master/images/states_map.JPG?raw=true)
 
 
+The bar chart below shows that the majority of respondents believe that women and men make equally good political leaders. However, a greater number believe that men make better political leaders than believe that women make better political leaders.
 
 
 ```{r barchart, warning=FALSE}
@@ -89,28 +91,20 @@ ggplot(womendata, aes(opinion_leaders))+
 2. *In general, women and men make equally good political leaders*
 3. *Women generally make better political leaders than men*
 
-The majority of respondents believe that women and men make equally good political leaders. However, a greater number believe that men make better political leaders than believe that women make better political leaders.
 
 
+#Application and Limitation of Linear Regression Model
 
+The linear regression model we tested is as follows:
 
-#Why a Linear Regression Isn't Appropriate
+"Opinion of Leadersi =$$ \beta 0 + \beta 1 Percent_womenelected + \beta 2 age_group + \beta 3 hhincome_group + \beta 4 gender + \beta 5 educ_group + \beta6 race + \beta7 employment + \beta8party + ei"$$
+
 ```{r collinear}
-Linreg=lm(opinion_leaders ~ perc_women + age + hhincome + gender + educ + race + employment + party, data=womendata) 
+Linreg=lm(opinion_leaders ~ perc_women + age_group + hhincome_group + gender + educ_group + race + employment + party, data=womendata) 
 
 
 ```
 
-A linear regression is not appropriate for this data because the outcome variable of interest is an ordered categorical variable.
-
-```{r}
-womendata.lm=lm(opinion_leaders~perc_women, data=womendata)
-
-qqPlot(womendata.lm, main="QQ Plot")
-
-```
-
-The above graph of the residuals is a good visual representation of why the linear model is inappropriate
 
 ```{r linregression}
 
@@ -119,13 +113,26 @@ pander(summary(Linreg))
 
 ```
 
+A linear regression is not appropriate for this data because the outcome variable is an ordered categorical variable. 
 
-#Results
+## QQPlot
+The QQPlot below of the residuals is a good visual representation that the linear model is inappropriate.
+```{r}
+womendata.lm=lm(opinion_leaders~perc_women, data=womendata)
 
+qqPlot(womendata.lm, main="QQ Plot")
+
+```
+
+
+#Ordered Probit Model
+Acknowledging the ordered nature of our outcome variable, we used an Ordered Probit Model for our study. 
+
+##Results
 
 ```{r}
 
-results.oprob<-oglmx(opinion_leaders ~ perc_women + educ + age + gender + hhincome + employment + party, data=womendata, link="probit",
+results.oprob<-oglmx(opinion_leaders ~ perc_women + age_group + hhincome_group + gender + educ_group + race + employment + party, data=womendata, link="probit",
      constantMEAN = FALSE, constantSD = FALSE,                         
      delta=0,threshparam = NULL)
 
@@ -138,27 +145,36 @@ As we are using the ordered probit model, we need to see the marginal effects to
 margins.oglmx(results.oprob,ascontinuous = TRUE)
 ```
 
-Our results show that education, gender, and party have significant effects at the 95% confidence level on a person's opinions on political leaders. Regarding our primary variable of interest, an 1-unit increase in the percentage of elected women representatives in the respondent's state of residence insignificantly decreases the likelihood of believing that men generally make better political leaders than woman by roughly 12%.
+Our results show that education, gender, and party have significant effects at the 95% confidence level on a person's opinions on political leaders. 
 
-#Heteroskedasticity
+Regarding our primary variable of interest, an 1-unit increase in the percentage of elected women representatives in the respondent's state of residence insignificantly decreases the likelihood of believing that men generally make better political leaders than woman by roughly 12%.
+
+
+##Heteroskedasticity
+Failure to account for heteroskedasticity can lead to biased paramter estimates in addition to misspecified standard errors. Our plot below shows that we do not have heteroskedasticity.
+
 ```{r heterosketadasticty, warning=FALSE}
-results.oprobhet<-oglmx(opinion_leaders ~ perc_women + educ + age + gender + hhincome + employment + party, data=womendata,constantMEAN= FALSE, constantSD= FALSE,threshparam=NULL)   
+results.oprobhet<-oglmx(opinion_leaders ~ perc_women + educ_group + age_group + gender + hhincome_group + race + employment + party, data=womendata,constantMEAN= FALSE, constantSD= FALSE,threshparam=NULL)   
 
 summary(results.oprobhet)
 ```
 
 ```{r}
-results.oprobhet<-oglmx(opinion_leaders ~ perc_women + educ + age + gender + hhincome + employment + party, data=womendata,constantMEAN= FALSE, constantSD= FALSE,threshparam=NULL)   
+results.oprobhet<-oglmx(opinion_leaders ~ perc_women + educ_group + age_group + gender + hhincome_group + race + employment + party, data=womendata,constantMEAN= FALSE, constantSD= FALSE,threshparam=NULL)   
 
 summary(results.oprobhet$Hetero)
 ```
 
 We tested our model for heteroskedasticity to see if the error term has constant variance. Because our test resulted in "FALSE," we know that there is equal variance in the distribution of residuals.
 
-#Multi-collinearity
+##Multi-collinearity
 ```{r multicolinearity}
 
-pander(vif(Linreg) > 3 )
+pander(vif(Linreg) > 8 )
 
 ```
 We tested for multicollinearity to see if our independent variables are perfect linear functions of each other. If there is multicollinearity, then our model will not work because we cannot simultaneously get estimates for independent variable that are perfect linear functions. Fortunately, our test resulted in "false."
+
+##Conclusion
+
+
