@@ -20,13 +20,14 @@ library(pander)
 library(ggplot2)
 library(car)
 library(oglmx)
+library(effects)
 ```
 
  
 #Introduction 
 In the United States, despite years of effort to increase the level of gender equality, women are underrepresented in leadership positions in the governemnt and in business. In 2014, PEW Research Center conducted a nationally representative phone survey asking respondents how they felt about men and women in leadership positions. We hypothesize that being exposed to women in leadership positions will increase individuals' perception of women as leaders. 
  
-Our research question is as follows: "**Does the percentage of female representatives in their state influence people's perceptions of women as leaders?".**
+Our research question is as follows: **"Does the percentage of female representatives in their state influence people's perceptions of women as leaders?".**
 
 
 ##Data
@@ -64,7 +65,7 @@ In the histogram below, we examine the distribution of "percent of female electe
 hist(womendata$perc_women,
      xlab= 'Percentage of Female elected representatives' , ylab='Number of Survey Respondents',
      main='Female Representatives among survey respondents',
-       col='coral1'
+       col='mediumpurple3'
      )
 
 ```
@@ -81,7 +82,7 @@ The bar chart below shows that the majority of respondents believe that women an
 
 ```{r barchart, warning=FALSE}
 ggplot(womendata, aes(opinion_leaders))+
-       geom_bar(fill='steelblue') + theme_classic() +
+       geom_bar(fill='plum3') + theme_classic() +
   xlab('Opinion about Political Leaders') + ylab('Frequency') + ggtitle('Distribution of Opinions about Leaders')
 
 ```
@@ -149,7 +150,6 @@ Our results show that education, gender, and party have significant effects at t
 
 Regarding our primary variable of interest, an 1-unit increase in the percentage of elected women representatives in the respondent's state of residence insignificantly decreases the likelihood of believing that men generally make better political leaders than woman by roughly 12%.
 
-
 ##Heteroskedasticity
 Failure to account for heteroskedasticity can lead to biased paramter estimates in addition to misspecified standard errors. Our plot below shows that we do not have heteroskedasticity.
 
@@ -173,8 +173,10 @@ We tested our model for heteroskedasticity to see if the error term has constant
 pander(vif(Linreg) > 8 )
 
 ```
-We tested for multicollinearity to see if our independent variables are perfect linear functions of each other. If there is multicollinearity, then our model will not work because we cannot simultaneously get estimates for independent variable that are perfect linear functions. Fortunately, our test resulted in "false."
+We tested for multicollinearity to see if our independent variables are perfect linear functions of each other. If there is multicollinearity, then our model will not work because we cannot simultaneously get estimates for independent variable that are perfect linear functions. Fortunately, our test resulted in "false" for all variables.
 
 ##Conclusion
+Our study shows that elected women representatives in  states does not have a signficant effect on their  opinion about women assuming leadership roles in politics. However, we found that being female, having a higher education level, and identifying as a liberal/Democrat increases the likelikihood of believing that women make better political leaders.
+
 
 
