@@ -25,17 +25,17 @@ library(effects)
 
  
 #Introduction 
-In the United States, despite years of effort to increase the level of gender equality, women are underrepresented in leadership positions in the governemnt and in business. In 2014, PEW Research Center conducted a nationally representative phone survey asking respondents how they felt about men and women in leadership positions. We hypothesize that being exposed to women in leadership positions will increase individuals' perception of women as leaders. 
+In the United States, despite years of effort to increase the level of gender equality, women are underrepresented in leadership positions in the government and in business. In 2014, PEW Research Center conducted a nationally representative phone survey asking respondents how they felt about men and women in leadership positions. We hypothesize that being exposed to women in leadership positions will increase individuals' perception of women as leaders. 
  
 Our research question is as follows: **"Does the percentage of female representatives in their state influence people's perceptions of women as leaders?".**
 
 
 ##Data
-The data for the outcome variable is from the Gender and Leadership dataset from PEW Research Centre. The final sample includes 1,835 adults, 18+ residing in the US and was conducted between November 12-21, 2014. The questionnaire was administered in both English and Spanish.
+The data for the outcome variable is from the Gender and Leadership dataset from PEW Research Center. The final sample includes 1,835 adults, 18+ residing in the US and was conducted between November 12-21, 2014. The questionnaire was administered in both English and Spanish.
 
 The data for the representatives is from the National Conference of State Legislatures. The two datasets were cleaned and merged to keep only the variables of interest. 
 
-The outcome variable is Question 5a on the PEW Survey which asks the respondents, 'Which one of the following statements comes closest to your opinion about as POLITICAL LEADERS?' 
+The outcome variable is Question 5a on the PEW Survey which asks the respondents, 'Which one of the following statements comes closest to your opinion about women as POLITICAL LEADERS?' 
 1. Men generally make better political leaders than women 
 2. In general, women and men make equally good political leaders 
 3. Women generally make better political leaders than men
@@ -43,7 +43,7 @@ The outcome variable is Question 5a on the PEW Survey which asks the respondents
 The outcome variable is an ordered categorical variable. We hypothesize that respondents' gender, age, level of education, race, household income level, employment, political party and percentage of elect women representatives in respective States, all likely impact their perception of women as political leaders.
 
 ##Summary Statistics
-
+To begin our analysis, we will examine the summary statistics for the variables in out data set.
 ```{r data import, eval=TRUE}
 link='https://github.com/lmchu1/WomenLeaders599/raw/master/preprocessed_data.csv'
 
@@ -91,6 +91,38 @@ ggplot(womendata, aes(opinion_leaders))+
 1. *Men generally make better political leaders than women *
 2. *In general, women and men make equally good political leaders*
 3. *Women generally make better political leaders than men*
+
+
+We would also like to examine the average opinion about women as political leaders by different groups - gender, years of education, and political party. As the average increases, this indicates that the groups holds a higher opinion of women as leaders.
+
+```{r}
+womendataNA <- na.omit(womendata) #removes rows with missing data
+gendermeans<-aggregate(womendataNA$opinion_leaders, list(womendataNA$gender), mean) #calculates the mean opinion about political leaders by gender
+pander(gendermeans)
+
+```
+
+Here we can see that men (Group 0) have a lower opinion of women as leaders than do women, with an average of 1.898 vs 1.998.
+
+
+```{r}
+educmeans<- aggregate(womendataNA$opinion_leaders, list(womendataNA$educ_group), mean) #calculates the mean opinion about political leaders by educational group 
+plot(educmeans$Group.1, educmeans$x, main="Education and Opinion of Women Leaders", 
+   xlab="Level of Education (by group)", ylab="Average Opinion of Women Leaders ", pch=19)
+
+```
+
+Generally, as education increases (represented by higher numbered education groups), opinion about women as leaders increases, though there is some variation.
+
+
+
+```{r}
+partymeans<- aggregate(womendataNA$opinion_leaders, list(womendataNA$party), mean) #calculates the mean opinion about political leaders by political party
+plot(partymeans$Group.1, partymeans$x, main="Political Party and Opinion of Women Leaders", 
+   xlab="Political Party (from conservative to liberal)", ylab="Average Opinion of Women Leaders ", pch=19)
+```
+
+Here we can see that as individuals identify as more liberal, their opinion of women as leaders increases.
 
 
 
@@ -175,8 +207,10 @@ pander(vif(Linreg) > 8 )
 ```
 We tested for multicollinearity to see if our independent variables are perfect linear functions of each other. If there is multicollinearity, then our model will not work because we cannot simultaneously get estimates for independent variable that are perfect linear functions. Fortunately, our test resulted in "false" for all variables.
 
+Confirming that our results do not show heteroskedasticity and multicollinearity further strengthen the statistical theory and validity of our results.
+
 ##Conclusion
-Our study shows that elected women representatives in  states does not have a signficant effect on their  opinion about women assuming leadership roles in politics. However, we found that being female, having a higher education level, and identifying as a liberal/Democrat increases the likelikihood of believing that women make better political leaders.
+Our study shows that elected women representatives in  states does not have a signficant effect on their opinion about women assuming leadership roles in politics. The lack of effect is not necessarily surprising, as there is likely some endogeneity between the two variables - while exposure to women in leadership positions may come to think more highly of women as leaders, people who think highly of women as leaders are also more likely to elect them. However, we found that being female, having a higher education level, and identifying as a liberal/Democrat increases the likelikihood of believing that women make better political leaders.
 
 
 
